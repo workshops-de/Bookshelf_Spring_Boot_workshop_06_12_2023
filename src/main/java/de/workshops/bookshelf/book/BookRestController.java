@@ -17,30 +17,30 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 class BookRestController {
 
-    private final BookService bookService;
+  private final BookService bookService;
 
-    public BookRestController(BookService bookService) {
-        this.bookService = bookService;
-    }
+  public BookRestController(BookService bookService) {
+    this.bookService = bookService;
+  }
 
-    @GetMapping
-    List<Book> getAllBooks() {
-        return bookService.getAllBooks();
-    }
+  @GetMapping
+  List<Book> getAllBooks() {
+    return bookService.getAllBooks();
+  }
 
-    @GetMapping("/{isbn}")
-    Book getSingleBook(@PathVariable String isbn) throws BookNotFoundException {
-        return bookService.searchBookByIsbn(isbn);
-    }
+  @GetMapping("/{isbn}")
+  Book getSingleBook(@PathVariable String isbn) throws BookNotFoundException {
+    return bookService.searchBookByIsbn(isbn);
+  }
 
-    @GetMapping(params = "author")
-    Book searchBookByAuthor(@RequestParam @Size(min = 3) String author)
-        throws BookNotFoundException {
-        return bookService.searchBookByAuthor(author);
-    }
+  @GetMapping(params = "author")
+  Book searchBookByAuthor(@RequestParam @Size(min = 3) String author)
+      throws BookNotFoundException {
+    return bookService.searchBookByAuthor(author);
+  }
 
-    @PostMapping("/search")
-    List<Book> searchBooks(@RequestBody @Valid BookSearchRequest bookSearchRequest) {
-        return bookService.searchBooks(bookSearchRequest);
-    }
+  @PostMapping("/search")
+  List<Book> searchBooks(@RequestBody @Valid BookSearchRequest bookSearchRequest) {
+    return bookService.searchBooks(bookSearchRequest);
+  }
 }
