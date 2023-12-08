@@ -5,13 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 class BookRepository {
+
+  public BookRepository(ObjectMapper objectMapper, ResourceLoader resourceLoader) {
+    this.objectMapper = objectMapper;
+    this.resourceLoader = resourceLoader;
+  }
 
   private final ObjectMapper objectMapper;
 
