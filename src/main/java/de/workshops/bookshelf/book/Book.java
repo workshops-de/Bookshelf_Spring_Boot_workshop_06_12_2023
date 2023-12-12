@@ -1,13 +1,16 @@
 package de.workshops.bookshelf.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
@@ -15,7 +18,9 @@ import org.hibernate.Hibernate;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 class Book {
 
@@ -26,6 +31,7 @@ class Book {
 
   private String title;
 
+  @Column(length = 1000)
   private String description;
 
   private String author;
@@ -41,6 +47,7 @@ class Book {
       return false;
     }
     Book book = (Book) o;
+
     return id != null && Objects.equals(id, book.id);
   }
 

@@ -1,6 +1,5 @@
 package de.workshops.bookshelf.book;
 
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,36 +12,29 @@ class BookService {
 
   private final BookRepository bookRepository;
 
-  private List<Book> books;
-
-  @PostConstruct
-  void init() {
-    books = bookRepository.findAllBooks();
-  }
-
   List<Book> getAllBooks() {
-    return books;
+    return bookRepository.findAllBooks();
   }
 
   Book searchBookByIsbn(String isbn) throws BookNotFoundException {
-    return this.books.stream().filter(book -> hasIsbn(book, isbn)).findFirst().orElseThrow(
+    return getAllBooks().stream().filter(book -> hasIsbn(book, isbn)).findFirst().orElseThrow(
         BookNotFoundException::new);
   }
 
   Book searchBookByAuthor(String author) throws BookNotFoundException {
-    return this.books.stream().filter(book -> hasAuthor(book, author)).findFirst().orElseThrow(
+    return getAllBooks().stream().filter(book -> hasAuthor(book, author)).findFirst().orElseThrow(
         BookNotFoundException::new);
   }
 
   List<Book> searchBooks(BookSearchRequest request) {
-    return this.books.stream()
+    return getAllBooks().stream()
         .filter(book -> hasAuthor(book, request.author()))
         .filter(book -> hasIsbn(book, request.isbn()))
         .toList();
   }
 
   Book createBook(Book book) {
-    books.add(book);
+    bookRepository.createBook(book);
 
     return book;
   }
