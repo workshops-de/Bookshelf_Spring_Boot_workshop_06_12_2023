@@ -6,12 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -28,6 +32,15 @@ class BookRestControllerIntegrationTest {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @TestConfiguration
+  static class JacksonTestConfiguration {
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+      return builder -> builder.featuresToEnable(SerializationFeature.INDENT_OUTPUT);
+    }
+  }
 
   @Test
   void getAllBooks() throws Exception {

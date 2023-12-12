@@ -2,11 +2,19 @@ application:
   title: '@project.name@'
   version: '@project.version@'
 
----
+bookshelf:
+  some-number: 11
+  some-text: More information
+
 spring:
-  config:
-    activate:
-      on-profile:
-        - prod
-server:
-  port: 8090
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
