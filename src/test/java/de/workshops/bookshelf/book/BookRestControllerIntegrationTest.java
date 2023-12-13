@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,9 +36,6 @@ class BookRestControllerIntegrationTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  @Autowired
-  private BookRepository bookRepository;
-
   @TestConfiguration
   static class JacksonTestConfiguration {
 
@@ -47,6 +46,7 @@ class BookRestControllerIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   void getAllBooks() throws Exception {
     MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/book"))
         .andDo(MockMvcResultHandlers.print())
@@ -64,6 +64,7 @@ class BookRestControllerIntegrationTest {
   }
 
   @Test
+  @WithMockUser
   void createBook() throws Exception {
     String author = "Eric Evans";
     String title = "Domain-Driven Design: Tackling Complexity in the Heart of Software";
@@ -84,7 +85,8 @@ class BookRestControllerIntegrationTest {
                     "author": "%s",
                     "description": "%s"
                 }""".formatted(isbn, title, author, description))
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf()))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
     String jsonPayload = mvcResult.getResponse().getContentAsString();
@@ -95,7 +97,11 @@ class BookRestControllerIntegrationTest {
         .ignoringFields("id")
         .isEqualTo(expectedBook);
 
-    // Restore previous state
-    bookRepository.delete(book);
+    // Restore previous database state by deleting the book again.
+    mockMvc.perform(MockMvcRequestBuilders.delete("/book/{isbn}", isbn)
+            .contentType(MediaType.APPLICATION_JSON)
+            .with(csrf()))
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }

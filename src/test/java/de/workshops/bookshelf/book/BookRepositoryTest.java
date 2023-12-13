@@ -22,8 +22,6 @@ class BookRepositoryTest {
   @Test
   void createBook() {
     Book book = buildAndSaveBook("123-4567890");
-    bookRepository.save(book);
-
     List<Book> books = bookRepository.findAll();
 
     assertNotNull(books);
@@ -43,9 +41,6 @@ class BookRepositoryTest {
 
     assertNotNull(newBook);
     assertEquals(book.getTitle(), newBook.getTitle());
-
-    // Restore previous state
-    bookRepository.delete(book);
   }
 
   private Book buildAndSaveBook(String isbn) {
@@ -55,8 +50,6 @@ class BookRepositoryTest {
         .description("Description")
         .isbn(isbn)
         .build();
-    bookRepository.save(book);
-
-    return book;
+    return bookRepository.save(book);
   }
 }
