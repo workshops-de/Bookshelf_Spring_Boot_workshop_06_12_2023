@@ -34,6 +34,9 @@ class BookRestControllerIntegrationTest {
   @Autowired
   private ObjectMapper objectMapper;
 
+  @Autowired
+  private BookRepository bookRepository;
+
   @TestConfiguration
   static class JacksonTestConfiguration {
 
@@ -91,5 +94,8 @@ class BookRestControllerIntegrationTest {
         .usingRecursiveComparison()
         .ignoringFields("id")
         .isEqualTo(expectedBook);
+
+    // Restore previous state
+    bookRepository.delete(book);
   }
 }

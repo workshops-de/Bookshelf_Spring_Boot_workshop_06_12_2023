@@ -13,12 +13,15 @@ class BookService {
   private final BookRepository bookRepository;
 
   List<Book> getAllBooks() {
-    return bookRepository.findAllBooks();
+    return bookRepository.findAll();
   }
 
   Book searchBookByIsbn(String isbn) throws BookNotFoundException {
-    return getAllBooks().stream().filter(book -> hasIsbn(book, isbn)).findFirst().orElseThrow(
-        BookNotFoundException::new);
+    final var book = bookRepository.findByIsbn(isbn);
+    if (book == null) {
+      throw new BookNotFoundException();
+    }
+    return book;
   }
 
   Book searchBookByAuthor(String author) throws BookNotFoundException {
@@ -34,9 +37,7 @@ class BookService {
   }
 
   Book createBook(Book book) {
-    bookRepository.createBook(book);
-
-    return book;
+    return bookRepository.save(book);
   }
 
   private boolean hasIsbn(Book book, String isbn) {
